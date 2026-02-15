@@ -1,0 +1,20 @@
+screentime-backend/
+  app/
+    main.py                 # FastAPI entrypoint, includes routers
+    core/
+      config.py             # loads env, creates supabase client
+      auth.py               # reads Bearer token -> user_id
+    routers/
+      screentime.py         # upload endpoint (already have)
+      dashboard.py          # summary endpoints (daily, by_app)
+      game.py               # “castle/zombie” endpoints
+    services/
+      parser.py             # parse raw_text -> [{"app","minutes"}]
+      stats.py              # DB queries -> aggregates
+      game_engine.py        # castle/zombie/procrastination logic
+    models/
+      schemas.py            # Pydantic request/response models
+    db/
+      repo.py               # small helper functions for DB reads/writes
+  requirements.txt
+  .env
