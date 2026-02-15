@@ -1,0 +1,29 @@
+AUDIT FINDINGS:
+
+1. NAVIGATION ISSUES:
+   - NavigationMenu hamburger is md:hidden - invisible on desktop! Need always-visible nav
+   - No back button on Dashboard page
+   - GroupDetail has back button but no hamburger menu
+   - JoinGroup has no navigation at all
+   - Home page (logged in) has no menu
+
+2. BACKEND ISSUES:
+   - castle.reset only resets castle stats + zombies, does NOT clear app usage (timer counts)
+   - appUsage.getToday shows only apps with logged usage, not apps with limits but no usage
+   - Dashboard shows "No app usage tracked yet" when limits exist but no usage logged
+   - appLimits.set uses onDuplicateKeyUpdate but there's no unique constraint on (userId, appName)
+
+3. BLOCKED PAGE:
+   - Override button is tiny Code icon - needs to be more prominent
+   - Override doesn't clear app usage data (timer counts)
+
+4. DISPLAY ISSUES:
+   - Dashboard shows app usage only from getToday, doesn't show configured limits without usage
+   - Need to show ALL configured app limits with their usage (0 if none logged)
+   - Progress bars only show for apps with usage, not for all limits
+
+5. QOL MISSING:
+   - No confirmation on delete actions
+   - Leaderboard/Nudges cards on Dashboard are non-functional (opacity-60)
+   - No way to edit existing app limits
+   - No indication of which apps have limits set in tracker
