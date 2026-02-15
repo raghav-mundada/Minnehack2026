@@ -4,6 +4,7 @@ import CreateGroupPage from './pages/CreateGroupPage';
 import JoinGroupPage from './pages/JoinGroupPage';
 import MyGroupsPage from './pages/MyGroupsPage';
 import GroupDashboard from './pages/GroupDashboard';
+import LeaderboardPage from './pages/LeaderboardPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/join" element={<JoinGroupPage />} />
         <Route path="/join/:groupCode" element={<JoinGroupPage />} />
         <Route path="/my-groups" element={<MyGroupsPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/group/:groupId" element={<GroupDashboard />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

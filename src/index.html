@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brainrot Defender</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <link rel="stylesheet" href="/styles/theme.css">
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script>
+        const { useState, useEffect } = React;
+
+        // Backend API URL
+        const API_URL = 'http://127.0.0.1:8000/api';
+
+        // JoinGroup Component
+        function JoinGroup({ onJoined }) {
+            const [inviteCode, setInviteCode] = useState('');
+            const [email, setEmail] = useState('');
+            const [error, setError] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            async function handleSubmit(e) {
+                e.preventDefault();
+                setError('');
+                setLoading(true);
+
+                try {
+                    const response = await fetch(`${API_URL}/join-group`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            invite_code: inviteCode.trim().toUpperCase(),
+                            email: email.trim().toLowerCase()
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        const data = await response.json();
+                        throw new Error(data.detail || 'Failed to join group');
+                    }
+
+                    onJoined(inviteCode.trim().toUpperCase());
+                } catch (err) {
+                    setError(err.message);
+                } finally {
+                    setLoading(false);
+                }
+            }
+
+            return React.createElement('div', { className: 'authPage' },
+                React.createElement('div', { className: 'authCard' },
+                    React.createElement('div', { className: 'authHeader' },
+                        React.createElement('div', { className: 'logo' }, '🏰'),
+                        React.createElement('h1', { className: 'h1' }, 'Brainrot Defender'),
+                        React.createElement('p', { className: 'sub' }, 'Mending > Ending')
+                    ),
+                    React.createElement('form', { className: 'authForm', onSubmit: handleSubmit },
+                        React.createElement('h2', { className: 'h2' }, 'Join a Group'),
+                        error && React.createElement('div', { className: 'alert alertError' }, error),
+                        React.createElement('div', { className: 'formGroup' },
+                            React.createElement('label', { htmlFor: 'email', className: 'label' }, 'Your Email'),
+                            React.createElement('input', {
+                                id: 'email',
+                                type: 'email',
+                                className: 'input',
+                                value: email,
+                                onChange: (e) => setEmail(e.target.value),
+                                placeholder: 'you@example.com',
+                                required: true
+                            })
+                        ),
+                        React.createElement('div', { className: 'formGroup' },
+                            React.createElement('label', { htmlFor: 'inviteCode', className: 'label' }, 'Invite Code'),
+                            React.createElement('input', {
+                                id: 'inviteCode',
+                                type: 'text',
+                                className: 'input',
+                                value: inviteCode,
+                                onChange: (e) => setInviteCode(e.target.value.toUpperCase()),
+                                placeholder: 'ABC123',
+                                required: true,
+                                maxLength: 6,
+                                style: { fontSize: '1.5rem', fontWeight: 'bold', letterSpacing: '0.1em', textAlign: 'center' }
+                            })
+                        ),
+                        React.createElement('button', {
+                            type: 'submit',
+                            className: 'btn btnPrimary btnFull',
+                            disabled: loading || inviteCode.length < 6
+                        }, loading ? 'Joining...' : 'Join Group')
+                    )
+                )
+            );
+        }
+
+        // Groups Component
+        function Groups({ groupCode }) {
+            const [loading, setLoading] = useState(true);
+            const [groupData, setGroupData] = useState(null);
+            const [groupStatus, setGroupStatus] = useState(null);
+            const [error, setError] = useState('');
+
+            useEffect(() => {
+                if (groupCode) {
+                    fetchGroupData();
+                }
+            }, [groupCode]);
+
+            async function fetchGroupData() {
+                setLoading(true);
+                setError('');
+                try {
+                    const [groupRes, statusRes] = await Promise.all([
+                        fetch(`${API_URL}/group/${groupCode}`),
+                        fetch(`${API_URL}/group/${groupCode}/status`)
+                    ]);
+
+                    if (groupRes.ok) {
+                        const group = await groupRes.json();
+                        setGroupData(group);
+                    }
+
+                    if (statusRes.ok) {
+                        const status = await statusRes.json();
+                        setGroupStatus(status);
+                    }
+                } catch (err) {
+                    setError(err.message);
+                } finally {
+                    setLoading(false);
+                }
+            }
+
+            if (loading) {
+                return React.createElement('div', { className: 'stack' },
+                    React.createElement('div', { className: 'loadingState' }, 'Loading your group...')
+                );
+            }
+
+            const totalUsed = groupStatus?.used_minutes || 0;
+            const totalLimit = groupStatus?.limit_minutes || 100;
+            const overallPct = totalLimit > 0 ? Math.min(100, Math.round((totalUsed / totalLimit) * 100)) : 0;
+            const castleHealth = groupStatus?.health_percent || 100;
+
+            return React.createElement('div', { className: 'stack' },
+                React.createElement('div', { className: 'headerRow' },
+                    React.createElement('div', null,
+                        React.createElement('div', { className: 'kicker' }, 'Your Group'),
+                        React.createElement('h1', { className: 'h1' }, groupData?.name || 'Loading...'),
+                        React.createElement('div', { className: 'sub' },
+                            `Code: ${groupCode} • ${groupStatus?.members?.length || 0} members`
+                        )
+                    ),
+                    React.createElement('div', { className: 'actions' },
+                        React.createElement('button', { className: 'btn', onClick: fetchGroupData }, '🔄 Refresh')
+                    )
+                ),
+                React.createElement('div', { className: 'card' },
+                    React.createElement('div', { className: 'cardTop' },
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'cardTitle' }, '⏱️ Total Time Today'),
+                            React.createElement('div', { className: 'muted' }, 'Group usage vs limit')
+                        ),
+                        React.createElement('div', { className: 'pill' }, `${totalUsed}m / ${totalLimit}m`)
+                    ),
+                    React.createElement('div', { className: 'bar big', style: { marginTop: 12 } },
+                        React.createElement('div', {
+                            className: 'barFill',
+                            style: {
+                                width: `${overallPct}%`,
+                                background: overallPct > 100 ? 'var(--danger)' : 'var(--good)'
+                            }
+                        })
+                    ),
+                    React.createElement('div', { className: 'tiny', style: { marginTop: 6, textAlign: 'center' } },
+                        `${overallPct}% of daily limit ${overallPct > 100 ? '⚠️ OVER LIMIT' : ''}`
+                    )
+                ),
+                React.createElement('div', { className: 'grid2' },
+                    React.createElement('section', { className: 'card' },
+                        React.createElement('div', { className: 'cardTop' },
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'cardTitle' }, '🏰 Castle Health'),
+                                React.createElement('div', { className: 'muted' }, groupStatus?.alive ? 'Alive and strong!' : 'Under attack!')
+                            ),
+                            React.createElement('div', { className: 'pill' }, `${castleHealth}%`)
+                        ),
+                        React.createElement('div', { className: 'bar big', style: { marginTop: 12 } },
+                            React.createElement('div', {
+                                className: 'barFill',
+                                style: {
+                                    width: `${castleHealth}%`,
+                                    background: castleHealth > 50 ? 'var(--good)' : 'var(--danger)'
+                                }
+                            })
+                        )
+                    ),
+                    React.createElement('section', { className: 'card' },
+                        React.createElement('div', { className: 'cardTop' },
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'cardTitle' }, '👥 Members'),
+                                React.createElement('div', { className: 'muted' }, `${groupStatus?.members?.length || 0} total`)
+                            )
+                        ),
+                        React.createElement('div', { className: 'memberList' },
+                            groupStatus?.members?.map((m, idx) =>
+                                React.createElement('div', { key: idx, className: 'memberRow' },
+                                    React.createElement('div', { className: 'avatar' }, m.email?.[0]?.toUpperCase() || '?'),
+                                    React.createElement('div', { className: 'memberMeta' },
+                                        React.createElement('div', { className: 'memberName' }, m.email),
+                                        React.createElement('div', { className: 'tiny muted' }, `${m.total_minutes || 0}m used`)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        // Main App Component
+        function App() {
+            const [groupCode, setGroupCode] = useState(localStorage.getItem('groupCode') || null);
+
+            function handleJoinedGroup(code) {
+                localStorage.setItem('groupCode', code);
+                setGroupCode(code);
+            }
+
+            function handleLeaveGroup() {
+                localStorage.removeItem('groupCode');
+                setGroupCode(null);
+            }
+
+            if (!groupCode) {
+                return React.createElement(JoinGroup, { onJoined: handleJoinedGroup });
+            }
+
+            return React.createElement('div', { className: 'page' },
+                React.createElement('header', { className: 'topbar' },
+                    React.createElement('div', { className: 'brand' },
+                        React.createElement('div', { className: 'logo' }, '🏰'),
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'kicker' }, 'Mending > Ending'),
+                            React.createElement('div', { className: 'title' }, 'Brainrot Defender')
+                        )
+                    ),
+                    React.createElement('div', { className: 'userMenu' },
+                        React.createElement('span', { className: 'userName' }, `Group: ${groupCode}`),
+                        React.createElement('button', { className: 'btnGhostSmall', onClick: handleLeaveGroup }, 'Leave Group')
+                    )
+                ),
+                React.createElement('main', { className: 'container' },
+                    React.createElement(Groups, { groupCode })
+                )
+            );
+        }
+
+        // Render
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+    </script>
+</body>
+
+</html>

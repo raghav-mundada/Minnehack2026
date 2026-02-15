@@ -6,7 +6,7 @@ import './GroupDashboard.css';
 function GroupDashboard() {
   const { groupId } = useParams();
   const navigate = useNavigate();
-  
+
   const [status, setStatus] = useState(null);
   const [streak, setStreak] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ function GroupDashboard() {
     return (
       <div className="container">
         <div className="page-header">
-          <button 
+          <button
             className="back-button secondary"
             onClick={() => navigate('/')}
           >
@@ -71,6 +71,7 @@ function GroupDashboard() {
   }
 
   const healthPercent = status.health_percent;
+  // const healthPercent = 40; // TEMPORARY FOR TESTING
   const isAlive = status.alive;
   const usagePercent = Math.min(100, Math.round((status.used_minutes / status.limit_minutes) * 100));
 
@@ -89,111 +90,148 @@ function GroupDashboard() {
     return `${mins}m`;
   };
 
+  const getUsageColor = (percent) => {
+    // Smooth gradient from green → yellow → red
+    // Green to Yellow (0% to 70%)
+    if (percent <= 70) {
+      const ratio = percent / 70;
+      const red = Math.round(52 + (255 - 52) * ratio);
+      const green = Math.round(199 - (199 - 149) * ratio);
+      return `rgb(${red}, ${green}, 89)`;
+    }
+    // Yellow to Red (70% to 100%)
+    else {
+      const ratio = (percent - 70) / 30;
+      const red = 255;
+      const green = Math.round(149 - (149 - 59) * ratio);
+      const blue = Math.round(0 + (48 - 0) * ratio);
+      return `rgb(${red}, ${green}, ${blue})`;
+    }
+  };
+
+  const getBackgroundClass = () => {
+    if (healthPercent >= 70) return 'bg-sunny';
+    if (healthPercent >= 30) return 'bg-sunset';
+    return 'bg-stormy';
+  };
+
+  const getStatusText = () => {
+    if (healthPercent >= 70) return 'Perfect Conditions ☀️';
+    if (healthPercent >= 30) return 'Sunset Warning 🌅';
+    return 'Storm Approaching ⛈️';
+  };
+
   return (
-    <div className="container">
-      <div className="page-header">
-        <button 
-          className="back-button secondary"
-          onClick={() => navigate('/')}
-        >
-          ← Home
+    <div className={`dashboard-container ${getBackgroundClass()}`}>
+
+      {/* Navigation */}
+      <div className="back-nav">
+        <button className="back-button-glass" onClick={() => navigate('/')}>
+          ← Back
         </button>
       </div>
 
-      {/* Status Badge */}
-      <div className="status-header">
-        <div className={`castle-status ${isAlive ? 'alive' : 'broken'}`}>
-          <div className="castle-icon-large">
-            {isAlive ? '🏰' : '💥'}
+      {/* Header (Like "San Francisco") */}
+      <header className="dashboard-header">
+        <h1 className="group-title">{status.group_name || 'My Castle'}</h1>
+        <div className="health-status-text">{getStatusText()}</div>
+        <div className="date">{new Date(status.date).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+      </header>
+
+      {/* Hero Section: 3D Floating Castle */}
+      <div className="hero-castle-container">
+        {/* Zombie Overlay */}
+        {healthPercent < 50 && (
+          <div className="zombie-horde">
+            <div className="zombie left" style={{ animationDelay: '0s' }}>🧟‍♂️</div>
+            <div className="zombie left" style={{ animationDelay: '2s', bottom: '15%' }}>🧟</div>
+            <div className="zombie right" style={{ animationDelay: '1s' }}>🧟‍♂️</div>
+            <div className="zombie right" style={{ animationDelay: '3s', bottom: '12%' }}>🧟</div>
+            {healthPercent < 25 && (
+              <>
+                <div className="zombie left" style={{ animationDelay: '4s', bottom: '8%' }}>🧟‍♂️</div>
+                <div className="zombie right" style={{ animationDelay: '5s', bottom: '18%' }}>🧟‍♂️</div>
+              </>
+            )}
           </div>
-          <div className={`badge ${isAlive ? 'success' : 'danger'}`}>
-            {isAlive ? 'Castle Standing' : 'Castle Broken'}
-          </div>
+        )}
+
+        <img
+          className="hero-castle-img"
+          src={`/assets/castle/castle_${healthPercent >= 87.5 ? '100' :
+            healthPercent >= 62.5 ? '75' :
+              healthPercent >= 37.5 ? '50' :
+                healthPercent >= 12.5 ? '25' : '0'
+            }.png`}
+          alt="Castle"
+        />
+
+        {/* Floating Health Widget */}
+        <div className="castle-health-overlay">
+          <div className="big-health-number">{healthPercent}°</div>
+          <div className="health-label">Health</div>
         </div>
       </div>
 
-      {/* Health Card */}
-      <div className="card health-card">
-        <div className="card-header">
-          <h2>Today's Health</h2>
-          <span className="date">{new Date(status.date).toLocaleDateString()}</span>
-        </div>
-        
-        <div className="health-display">
-          <div className="health-number">{healthPercent}%</div>
-          <div className="progress-bar">
-            <div 
-              className={`progress-bar-fill ${getHealthColor()}`}
-              style={{ width: `${healthPercent}%` }}
+      {/* Stats Grid using Glassmorphism */}
+      <div className="stats-grid">
+
+        {/* Card 1: Daily Usage */}
+        <div className="glass-card">
+          <h3>Daily Usage</h3>
+          <div className="stat-row">
+            <span>Used: {formatMinutes(status.used_minutes)}</span>
+            <span>Limit: {formatMinutes(status.limit_minutes)}</span>
+          </div>
+          <div className="glass-progress-track">
+            <div
+              className="glass-progress-fill"
+              style={{ width: `${Math.min(100, usagePercent)}%` }}
             ></div>
           </div>
         </div>
 
-        <div className="usage-stats">
-          <div className="stat">
-            <span className="stat-label">Used</span>
-            <span className="stat-value">{formatMinutes(status.used_minutes)}</span>
+        {/* Card 2: Streak (If Active) */}
+        {streak && (
+          <div className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <h3>Streak</h3>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{streak.current_streak_days} Days 🔥</div>
+            </div>
+            <div style={{ fontSize: '0.9rem', opacity: 0.8, maxWidth: '150px', textAlign: 'right' }}>
+              {streak.current_streak_days > 0 ? "Keep the flame alive!" : "Start a streak today!"}
+            </div>
           </div>
-          <div className="stat-divider">/</div>
-          <div className="stat">
-            <span className="stat-label">Limit</span>
-            <span className="stat-value">{formatMinutes(status.limit_minutes)}</span>
-          </div>
-        </div>
+        )}
 
-        <div className="usage-bar">
-          <div className="usage-bar-label">Daily Usage</div>
-          <div className="progress-bar">
-            <div 
-              className={`progress-bar-fill ${usagePercent >= 100 ? 'danger' : usagePercent >= 80 ? 'warning' : 'success'}`}
-              style={{ width: `${usagePercent}%` }}
-            ></div>
-          </div>
-          <div className="usage-bar-percent">{usagePercent}%</div>
-        </div>
-      </div>
-
-      {/* Streak Card */}
-      {streak && (
-        <div className="card streak-card">
-          <div className="streak-icon">🔥</div>
-          <div className="streak-number">{streak.current_streak_days}</div>
-          <div className="streak-label">Day Streak</div>
-          <p className="streak-subtitle">
-            {streak.current_streak_days === 0 
-              ? 'Start your streak today!'
-              : `Keep it going!`
-            }
-          </p>
-        </div>
-      )}
-
-      {/* Members Leaderboard */}
-      <div className="card members-card">
-        <h3>Today's Usage</h3>
-        {status.members && status.members.length > 0 ? (
+        {/* Card 3: Member Ranking */}
+        <div className="glass-card">
+          <h3>Group Members</h3>
           <div className="members-list">
-            {status.members.map((member, index) => (
-              <div key={member.email} className="member-row">
-                <div className="member-rank">#{index + 1}</div>
-                <div className="member-info">
-                  <div className="member-email">{member.email}</div>
-                  <div className="member-usage">{formatMinutes(member.total_minutes)}</div>
+            {status.members && status.members.map((member, index) => (
+              <div key={member.email} className="member-row-glass">
+                <div className="rank-circle">{index + 1}</div>
+                <div className="member-info-glass">
+                  <div className="member-email-glass">{member.email.split('@')[0]}</div>
+                  <div className="member-time-glass">{formatMinutes(member.total_minutes)}</div>
                 </div>
+                <button
+                  className="nudge-btn-glass"
+                  title="Nudge"
+                  onClick={() => alert(`🔔 Nudged ${member.email}!`)}
+                >
+                  🔔
+                </button>
               </div>
             ))}
           </div>
-        ) : (
-          <p className="empty-members">No usage data yet today</p>
-        )}
-      </div>
+        </div>
 
-      <button 
-        className="refresh-button secondary w-full mt-3"
-        onClick={loadGroupData}
-      >
-        🔄 Refresh
-      </button>
+        <button className="back-button-glass" style={{ width: '100%', marginTop: '1rem' }} onClick={loadGroupData}>
+          🔄 Refresh Data
+        </button>
+
+      </div>
     </div>
   );
 }

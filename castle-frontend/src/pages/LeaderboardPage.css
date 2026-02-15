@@ -1,0 +1,237 @@
+.leaderboard-container {
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    color: var(--text-primary);
+}
+
+.leaderboard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.back-button {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s;
+    box-shadow: none;
+}
+
+.back-button:hover {
+    color: var(--accent);
+    background: none;
+    transform: translateX(-5px);
+    box-shadow: none;
+}
+
+.leaderboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Podium Styles */
+.podium-section {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 4rem;
+    height: 280px;
+}
+
+.podium-spot {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    width: 120px;
+    position: relative;
+}
+
+.pedestal {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 1rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.rank {
+    font-size: 2.5rem;
+    font-weight: 800;
+    opacity: 0.8;
+}
+
+.group-info {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.group-info h3 {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.streak {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Gold - 1st */
+.podium-spot.gold .pedestal {
+    height: 160px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.podium-spot.gold .rank {
+    color: #FFA500;
+}
+
+.podium-spot.gold .crown {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    animation: float 2s ease-in-out infinite;
+}
+
+/* Silver - 2nd */
+.podium-spot.silver .pedestal {
+    height: 120px;
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.2), rgba(160, 160, 160, 0.2));
+    border: 1px solid rgba(192, 192, 192, 0.3);
+}
+
+.podium-spot.silver .rank {
+    color: #A0A0A0;
+}
+
+/* Bronze - 3rd */
+.podium-spot.bronze .pedestal {
+    height: 80px;
+    background: linear-gradient(135deg, rgba(205, 127, 50, 0.2), rgba(160, 82, 45, 0.2));
+    border: 1px solid rgba(205, 127, 50, 0.3);
+}
+
+.podium-spot.bronze .rank {
+    color: #A0522D;
+}
+
+/* List Styles */
+.rankings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ranking-item:hover {
+    transform: translateY(-2px);
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.rank-badge {
+    width: 2rem;
+    height: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-right: 1.5rem;
+}
+
+.group-details {
+    flex: 1;
+}
+
+.group-details h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.streak-badge {
+    background: rgba(255, 149, 0, 0.1);
+    color: var(--warning);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@media (max-width: 600px) {
+    .podium-section {
+        align-items: center;
+        flex-direction: column;
+        height: auto;
+        gap: 1.5rem;
+    }
+
+    .podium-spot {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 16px;
+        margin-bottom: 0.5rem;
+    }
+
+    .pedestal {
+        display: none;
+    }
+}

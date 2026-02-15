@@ -8,7 +8,9 @@ function LandingPage() {
     <div className="container">
       <div className="landing-content">
         <div className="hero">
-          <div className="castle-icon">🏰</div>
+          <div className="castle-image-container">
+            <img src="/assets/castle/castle_100.png" alt="Castle at 100% health" className="hero-castle" />
+          </div>
           <h1>Castle</h1>
           <p className="tagline">Defend your castle together</p>
           <p className="description">
@@ -18,23 +20,29 @@ function LandingPage() {
         </div>
 
         <div className="actions">
-          <button 
+          <button
             className="primary-button"
             onClick={() => navigate('/create')}
           >
             Create Group
           </button>
-          <button 
+          <button
             className="secondary-button"
             onClick={() => navigate('/join')}
           >
             Join Group
           </button>
-          <button 
+          <button
             className="secondary-button"
             onClick={() => navigate('/my-groups')}
           >
             My Groups
+          </button>
+          <button
+            className="secondary-button"
+            onClick={() => navigate('/leaderboard')}
+          >
+            🏆 Global Leaderboard
           </button>
         </div>
 
