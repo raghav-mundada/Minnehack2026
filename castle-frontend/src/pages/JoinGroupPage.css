@@ -1,0 +1,13 @@
+.help-card {
+  background: var(--bg-secondary);
+}
+
+.help-card p {
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.help-card strong {
+  color: var(--text-primary);
+}
