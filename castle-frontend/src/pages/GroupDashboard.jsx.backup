@@ -12,7 +12,7 @@ function GroupDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // App Limits State
+ 
   const [appLimits, setAppLimits] = useState([]);
   const [appUsage, setAppUsage] = useState([]);
   const [newAppName, setNewAppName] = useState('');
@@ -106,7 +106,7 @@ function GroupDashboard() {
       const green = Math.round(199 - (199 - 149) * ratio);
       return `rgb(${red}, ${green}, 89)`;
     }
-    // Yellow to Red (70% to 100%)
+   
     else {
       const ratio = (percent - 70) / 30;
       const red = 255;
@@ -138,14 +138,14 @@ function GroupDashboard() {
         </button>
       </div>
 
-      {/* Header (Like "San Francisco") */}
+    
       <header className="dashboard-header">
         <h1 className="group-title">{status.group_name || 'My Castle'}</h1>
         <div className="health-status-text">{getStatusText()}</div>
         <div className="date">{new Date(status.date).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
       </header>
 
-      {/* Hero Section: 3D Floating Castle */}
+     
       <div className="hero-castle-container">
         {/* Zombie Overlay */}
         {healthPercent < 50 && (
@@ -198,7 +198,7 @@ function GroupDashboard() {
           </div>
         </div>
 
-        {/* Card 2: Streak (If Active) */}
+        
         {streak && (
           <div className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
@@ -211,7 +211,7 @@ function GroupDashboard() {
           </div>
         )}
 
-        {/* Card 3: Member Ranking */}
+      
         <div className="glass-card">
           <h3>Group Members</h3>
           <div className="members-list">
