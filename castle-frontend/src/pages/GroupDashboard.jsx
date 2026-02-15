@@ -124,21 +124,21 @@ function GroupDashboard() {
   return (
     <div className={`dashboard-container ${getBackgroundClass()}`}>
 
-      {/* Navigation */}
+      
       <div className="back-nav">
         <button className="back-button-glass" onClick={() => navigate('/')}>
           ← Back
         </button>
       </div>
 
-      {/* Header (Like "San Francisco") */}
+     
       <header className="dashboard-header">
         <h1 className="group-title">{status.group_name || 'My Castle'}</h1>
         <div className="health-status-text">{getStatusText()}</div>
         <div className="date">{new Date(status.date).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
       </header>
 
-      {/* Hero Section: 3D Floating Castle */}
+     
       <div className="hero-castle-container">
         {/* Zombie Overlay */}
         {healthPercent < 50 && (
@@ -173,10 +173,10 @@ function GroupDashboard() {
         </div>
       </div>
 
-      {/* Stats Grid using Glassmorphism */}
+     
       <div className="stats-grid">
 
-        {/* Card 1: Daily Usage */}
+      
         <div className="glass-card">
           <h3>Daily Usage</h3>
           <div className="stat-row">
