@@ -18,3 +18,17 @@ screentime-backend/
       repo.py               # small helper functions for DB reads/writes
   requirements.txt
   .env
+
+  screentime-frontend/
+  src/
+    lib/
+      supabase.ts           # supabase client
+      api.ts                # calls backend endpoints
+    pages/
+      Login.tsx
+      Dashboard.tsx
+      Game.tsx
+    components/
+      Charts.tsx
+      CastleView.tsx
+      ZombieView.tsx
