@@ -21,7 +21,7 @@ function MyGroupsPage() {
       const result = await getGroupsForEmail(email);
       setGroups(result);
       setSearched(true);
-      
+
       // Save email for convenience
       localStorage.setItem('userEmail', email);
     } catch (err) {
@@ -34,7 +34,7 @@ function MyGroupsPage() {
   return (
     <div className="container">
       <div className="page-header">
-        <button 
+        <button
           className="back-button secondary"
           onClick={() => navigate('/')}
         >
@@ -63,8 +63,8 @@ function MyGroupsPage() {
           />
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="w-full"
           disabled={loading}
         >
@@ -75,7 +75,7 @@ function MyGroupsPage() {
       {searched && groups.length === 0 && (
         <div className="empty-state card mt-3">
           <p>No groups found for this email.</p>
-          <button 
+          <button
             className="secondary mt-2"
             onClick={() => navigate('/join')}
           >
@@ -88,7 +88,7 @@ function MyGroupsPage() {
         <div className="groups-list mt-3">
           <h3>Your Groups</h3>
           {groups.map((group) => (
-            <div 
+            <div
               key={group.group_id}
               className="group-card card"
               onClick={() => navigate(`/group/${group.group_id}`)}
@@ -106,10 +106,6 @@ function MyGroupsPage() {
           ))}
         </div>
       )}
-
-      <div className="info-note card mt-3">
-        <p><strong>Note:</strong> The /groups/{'{email}'} endpoint is not yet implemented in the backend. You'll need to add it to your FastAPI server.</p>
-      </div>
     </div>
   );
 }
